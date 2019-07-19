@@ -1,6 +1,9 @@
 import numpy as np
+import math
 
-alpha = 100
+im_dist = 100
+dist = 300
+depth = 5
 #ここには2値化した画像を入力
 #ここではダミーで対応
 front_view = np.zeros((300,400))
@@ -14,21 +17,29 @@ obj_index = list(np.where(front_view==1))
 
 #中心からの距離に変換
 #各要素のX座標を中心からの距離に変換
-obj_index[0]-=150
+obj_index[0]-=math.ceil(front_view.shape[0] / 2)
 #各要素のY座標を中心からの距離に変換
-obj_index[1]-=200
+obj_index[1]-=math.ceil(front_view.shape[1] / 2)
 
-for n in range(9):
-    for i in range(2):
-        print(obj_index[i][n])
+#有色画素数の算出
+obj_num = obj_index[0].size
 
+#ボクセル空間の構築
+#最奥部でのX,Yサイズの決定
+#最大倍率の決定
+sizemag_max = (depth+im_dist+dist)/(im_dist+dist)
+#初期値でのX,Y座標の算出
+x_size = front_view.shape[0]
+y_size = front_view.shape[1]
+final_x_size = math.ceil(x_size * sizemag_max)
+final_y_size = math.ceil(y_size * sizemag_max)
+projection_voxels = numpy.zeros((depth, final_x_size, final_y_size))
 
 
 #ここから3次元空間合成
-for depth in range(5):
-    sizemag = (depth+alpha)/alpha
-    x_size = front_view.shape[0]
-    y_size = front_view.shape[1]
-    modified_x_size = int(x_size * sizemag)
-    modified_y_size = int(y_size * sizemag)
-    #print(modified_x_size, modified_y_size)
+for depth_i in range(depth):
+    #各階層での倍率を計算
+    sizemag = (depth_i+im_dist+dist)/(im_dist+dist)
+    for i in obj_num:
+        #各有効画素の左端の座標を決定
+        obj_index[0][i]*sizemag
