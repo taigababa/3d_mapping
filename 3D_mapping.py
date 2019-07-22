@@ -7,8 +7,7 @@ import glob
 dist = 100
 
 #予定される合成空間のサイズ指定
-depth = 1
-
+depth = 100
 #カメラのパラメータ
 A = 0.0008625821
 B = 0.03849
@@ -16,12 +15,12 @@ threshold = 100
 #三次元配列の入力切り替え用
 image_count = 0
 
-#収納予定の三次元空間配列作成
+#収納予定の三次元空間配列作成 depth×y×x
 map_front = np.zeros((depth,depth,depth))
-print(map_front.shape[0],map_front.shape[1],map_front.shape[2])
+#print(map_front.shape[0],map_front.shape[1],map_front.shape[2])
 
 map_side = np.zeros((depth,depth,depth))
-print(map_side.shape[0],map_side.shape[1],map_side.shape[2])
+#print(map_side.shape[0],map_side.shape[1],map_side.shape[2])
 
 
 
@@ -33,10 +32,10 @@ try:
         image_count = image_count+1
         im_height = img.shape[0]
         im_width = img.shape[1]
-        print('im_height',im_height,'im_width',im_width)
-        print('readimage_success')
+        #print('im_height',im_height,'im_width',im_width)
+        #print('readimage_success')
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        print('grayimage_success')
+        #print('grayimage_success')
         cv2.namedWindow('gray', cv2.WINDOW_NORMAL)
         cv2.imshow('gray', gray)
 
@@ -52,19 +51,19 @@ try:
             depth_image_gray = cv2.resize(gray, (int(im_width*conv), int(im_height*conv)))
             ret, depth_image = cv2.threshold(depth_image_gray, threshold, 255, cv2.THRESH_BINARY)
             depth_image = depth_image/255
-            print('depth_image_y',depth_image.shape[0])
-            print('depth_image_x',depth_image.shape[1])
+            #print('depth_image_y',depth_image.shape[0])
+            #print('depth_image_x',depth_image.shape[1])
 
-            cv2.namedWindow('depth_image', cv2.WINDOW_NORMAL)
-            cv2.imshow('depth_image', depth_image)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            #cv2.namedWindow('depth_image', cv2.WINDOW_NORMAL)
+            #cv2.imshow('depth_image', depth_image)
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
 
             depth_image_object = np.where(depth_image == 1)
             #print(depth_image_object[1])
             #画素値が1のy座標が最大になる要素数ymax
             ymax = np.ndarray.max(depth_image_object[0])
-            print('ymax',ymax)
+            #print('ymax',ymax)
 
             #ymaxを下端として上方向に100積む
             #サイズ調整
@@ -76,29 +75,67 @@ try:
             depth_image_refine = np.vstack((refine_y_array, depth_image_deleted))
 
             #横方向引き伸ばし
+            #x軸方向の変化を求める(100より少ないケース)
+            if depth_image_refine.shape[1] < 100:
+                print('upgrade')
+                x_change = 100 - depth_image_refine.shape[1]
+                x_change_0 = int(np.floor(x_change/2))
+                round_checker = x_change/2 - x_change_0
+                #四捨五入はroundだとバグりそうなので
+                if round_checker >= 0.5:
+                    x_change_max = x_change_0+1
+                else:
+                    x_change_max = x_change_0
+                #print('x_change_0', x_change_0)
+                #print('x_change_max',x_change_max)
 
-            print('depth_image',depth_image.shape[0])
-            print('depth_image_deleted',depth_image_deleted.shape[0])
-            print('depth_image_refine',depth_image_refine.shape[0])
-            cv2.namedWindow('depth_image_deleted', cv2.WINDOW_NORMAL)
-            cv2.imshow('depth_image_deleted', depth_image_deleted)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+                refine_x_0_array = np.zeros((100,x_change_0))
+                refine_x_max_array = np.zeros((100, x_change_max))
+                depth_image_refine = np.hstack((refine_x_0_array,depth_image_refine))
+                depth_image_refine = np.hstack((depth_image_refine, refine_x_max_array))
 
-            cv2.namedWindow('depth_image_refine', cv2.WINDOW_NORMAL)
-            cv2.imshow('depth_image_refine', depth_image_refine)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            #x軸調整(100より多いケース)
+            elif depth_image_refine.shape[1] > 100:
+                print('reduce',depth_image_refine.shape[1])
+                x_change = depth_image_refine.shape[1] - 100
+                x_change_0 = int(np.floor(x_change/2))
+                print('x_change_0',x_change_0)
+                round_checker = x_change/2 - x_change_0
+                if round_checker >= 0.5:
+                    x_change_max = x_change_0+1
+                else:
+                    x_change_max = x_change_0
+                print('x_change_max', x_change_max)
+                depth_image_refine = np.delete(depth_image_refine, np.s_[:x_change_0], 1)
+                print('after 0 refine',depth_image_refine.shape[1])
+                depth_image_refine = np.delete(depth_image_refine, np.s_[depth_image_refine.shape[1] - x_change_max:], 1)
+                print('after max refine',depth_image_refine.shape[1])
 
+            #print('depth_image_y',depth_image.shape[0])
+            #print('depth_image_deleted_y',depth_image_deleted.shape[0])
+            #print('depth_image_refine_y',depth_image_refine.shape[0])
+            #print('depth_image_x',depth_image.shape[1])
+            print('depth_image_refine_x',depth_image_refine.shape[1])
+            #cv2.namedWindow('depth_image_deleted', cv2.WINDOW_NORMAL)
+            #cv2.imshow('depth_image_deleted', depth_image_deleted)
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
 
-
-
+            #cv2.namedWindow('depth_image_refine', cv2.WINDOW_NORMAL)
+            #cv2.imshow('depth_image_refine', depth_image_refine)
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
 
             #3次元配列に入力
-            #if image_count == 1:
-                #map_frontに代入
-            #else:
-                #map_sideに代入
+            if image_count == 1:
+                map_front[depth_frame]=depth_image_refine
+
+            else:
+                map_side[depth_frame]= depth_image_refine
+
+            #3次元配列の掛け算
+            map_true = map_front * map_side
+            
 
 
 except:
