@@ -2,6 +2,9 @@ import numpy as np
 import cv2
 import sys
 import glob
+import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits.mplot3d import Axes3D
 
 #撮影空間との距離を指定
 dist = 100
@@ -36,8 +39,8 @@ try:
         #print('readimage_success')
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         #print('grayimage_success')
-        cv2.namedWindow('gray', cv2.WINDOW_NORMAL)
-        cv2.imshow('gray', gray)
+        #cv2.namedWindow('gray', cv2.WINDOW_NORMAL)
+        #cv2.imshow('gray', gray)
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -77,7 +80,7 @@ try:
             #横方向引き伸ばし
             #x軸方向の変化を求める(100より少ないケース)
             if depth_image_refine.shape[1] < 100:
-                print('upgrade')
+                #print('upgrade')
                 x_change = 100 - depth_image_refine.shape[1]
                 x_change_0 = int(np.floor(x_change/2))
                 round_checker = x_change/2 - x_change_0
@@ -96,26 +99,26 @@ try:
 
             #x軸調整(100より多いケース)
             elif depth_image_refine.shape[1] > 100:
-                print('reduce',depth_image_refine.shape[1])
+                #print('reduce',depth_image_refine.shape[1])
                 x_change = depth_image_refine.shape[1] - 100
                 x_change_0 = int(np.floor(x_change/2))
-                print('x_change_0',x_change_0)
+                #print('x_change_0',x_change_0)
                 round_checker = x_change/2 - x_change_0
                 if round_checker >= 0.5:
                     x_change_max = x_change_0+1
                 else:
                     x_change_max = x_change_0
-                print('x_change_max', x_change_max)
+                #print('x_change_max', x_change_max)
                 depth_image_refine = np.delete(depth_image_refine, np.s_[:x_change_0], 1)
-                print('after 0 refine',depth_image_refine.shape[1])
+                #print('after 0 refine',depth_image_refine.shape[1])
                 depth_image_refine = np.delete(depth_image_refine, np.s_[depth_image_refine.shape[1] - x_change_max:], 1)
-                print('after max refine',depth_image_refine.shape[1])
+                #print('after max refine',depth_image_refine.shape[1])
 
             #print('depth_image_y',depth_image.shape[0])
             #print('depth_image_deleted_y',depth_image_deleted.shape[0])
             #print('depth_image_refine_y',depth_image_refine.shape[0])
             #print('depth_image_x',depth_image.shape[1])
-            print('depth_image_refine_x',depth_image_refine.shape[1])
+            #print('depth_image_refine_x',depth_image_refine.shape[1])
             #cv2.namedWindow('depth_image_deleted', cv2.WINDOW_NORMAL)
             #cv2.imshow('depth_image_deleted', depth_image_deleted)
             #cv2.waitKey(0)
@@ -135,7 +138,26 @@ try:
 
             #3次元配列の掛け算
             map_true = map_front * map_side
-            
+
+            X = map_true[1]
+            Y = map_true[0]
+            Z = map_true[2]
+
+            #グラフの枠を作っていく
+            fig = plt.figure()
+            ax = Axes3D(fig)
+
+            #軸にラベルを付けたいときは書く
+            ax.set_xlabel("X")
+            ax.set_ylabel("Y")
+            ax.set_zlabel("Z")
+            ax.plot(X,Y,Z,marker="o",linestyle='None')
+
+            plt.show()
+
+
+
+
 
 
 except:
