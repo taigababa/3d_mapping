@@ -5,6 +5,7 @@ import glob
 import matplotlib.pyplot as plt
 import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.colors as colors
 
 #撮影空間との距離を指定
 dist = 100
@@ -19,10 +20,10 @@ threshold = 100
 image_count = 0
 
 #収納予定の三次元空間配列作成 depth×y×x
-map_front = np.zeros((depth,depth,depth))
+map_front = np.zeros((depth,depth,depth)).reshape(depth,depth,depth)
 #print(map_front.shape[0],map_front.shape[1],map_front.shape[2])
 
-map_side = np.zeros((depth,depth,depth))
+map_side = np.zeros((depth,depth,depth)).reshape(depth,depth,depth)
 #print(map_side.shape[0],map_side.shape[1],map_side.shape[2])
 
 
@@ -136,24 +137,36 @@ try:
             else:
                 map_side[depth_frame]= depth_image_refine
 
-            #3次元配列の掛け算
-            map_true = map_front * map_side
+        #3次元配列の掛け算
+        map_true = map_front * map_side.transpose(2,1,0)
+        map_true = map_true.T
 
-            X = map_true[1]
-            Y = map_true[0]
-            Z = map_true[2]
 
-            #グラフの枠を作っていく
-            fig = plt.figure()
-            ax = Axes3D(fig)
+        x_list=[i for i in range(100)]
+        y_list=[i for i in range(100)]
+        z_list=[i for i in range(100)]
 
-            #軸にラベルを付けたいときは書く
-            ax.set_xlabel("X")
-            ax.set_ylabel("Y")
-            ax.set_zlabel("Z")
-            ax.plot(X,Y,Z,marker="o",linestyle='None')
+        fig = plt.figure()
+        ax = fig.add_subplot(111,projection="3d")
 
-            plt.show()
+        mask = map_true==1
+        X,Y,Z=np.meshgrid(x_list,y_list,z_list)
+        ax.set_xlabel("x",labelpad=10,fontsize=24)
+        ax.set_ylabel("y",labelpad=10,fontsize=24)
+        ax.set_zlabel("z",labelpad=10,fontsize=24)
+        ax.set_xlim(100,0)
+        ax.set_ylim(0,100)
+        ax.set_zlim(0,100)
+        ax.scatter(X[mask], Y[mask], Z[mask],map_true)
+        plt.show()
+        print('X',X[mask].ravel())
+        print('Y',Y[mask].ravel())
+        print('Z',Z[mask].ravel())
+
+
+
+
+
 
 
 
