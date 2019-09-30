@@ -15,6 +15,9 @@ import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.colors as colors
 
+#計算用
+import math
+
 #撮影空間との距離を想定[mm]
 dist = 100
 
@@ -27,14 +30,18 @@ z_range = 100
 #y = ax + bの形
 A = 0.0008625821
 B = 0.03849
-
+#3台目のカメラの仰角設定[deg]
+theta = 30
 #threshold用
 threshold = 100
 
 #3次元配列作成関数
-def Make_3D_Array(x,y,z):
-    array_3D = np.zeros((x,y,z)).reshape(x,y,z)
+def Make_3D_Array(y,x,z):
+    #array上での次元と座標系ではx,yが入れ替わる
+    array_3D = np.zeros((y,x,z)).reshape(y,x,z)
+
     return array_3D
+
 
 
 #3次元配列入力関数
@@ -91,9 +98,9 @@ def Fill_3D_Array(filename,x,y,z,array):
                         x_change_max = x_change_0
 
 
-                    refine_x_0_array = np.zeros((x,x_change_0))
+                    refine_x_0_array = np.zeros((y,x_change_0))
 
-                    refine_x_max_array = np.zeros((x, x_change_max))
+                    refine_x_max_array = np.zeros((y, x_change_max))
 
                     depth_image_refine = np.hstack((refine_x_0_array,depth_image_refine))
                     depth_image_refine = np.hstack((depth_image_refine, refine_x_max_array))
@@ -118,7 +125,9 @@ def Fill_3D_Array(filename,x,y,z,array):
 
 
                 #ここから配列入力
-                array[depth_frame]= depth_image_refine
+                array[:,:,depth_frame]= depth_image_refine
+
+                #print('x_low:',array[:,:,depth_frame].shape[1],' y_low:',array[:,:,depth_frame].shape[0])
 
 
 
@@ -150,17 +159,43 @@ def Show_3D(x,y,z,map):
     plt.show()
 #show関数ここまで
 
+#ななめ処理関数
+def Make_Array_Straight(map):
+    x_size = map.shape[1]
+    y_size = map.shape[0]
+    z_size = map.shape[2]
+
+    for z in range(z_size):
+        image_original = map
+
 
 
 #正面方向作成
-map_front = Make_3D_Array(x_range,y_range,z_range)
+#print('make_front')
+map_front = Make_3D_Array(y_range,x_range,z_range)
 Fill_3D_Array('IMG_5674.JPG',x_range,y_range,z_range,map_front)
 
 #横方向作成
-map_side = Make_3D_Array(x_range,y_range,z_range)
+#print('make_side')
+map_side = Make_3D_Array(y_range,x_range,z_range)
 Fill_3D_Array('IMG_5675.JPG',x_range,y_range,z_range,map_side)
 
-map_true = map_front*map_side.transpose(2,1,0)
-map_true = map_true.T
+#ななめ作成
+#y方向とz方向のサイズ計算
+#print('make_oblique')
+y_range_oblique = int(y_range*math.cos(math.radians(theta))+z_range*math.sin(math.radians(theta)))
+z_range_oblique = int(z_range*math.cos(math.radians(theta))+y_range*math.sin(math.radians(theta)))
+#空間作成
+map_oblique = Make_3D_Array(y_range_oblique, x_range, z_range_oblique)
+Fill_3D_Array('IMG_5675.JPG',x_range,y_range_oblique,z_range_oblique,map_oblique)
 
+
+
+
+#掛け算
+map_true = map_front*map_side.transpose(0,2,1)
+image_upper = map_true[:,:,50]
+
+
+#表示
 Show_3D(x_range,y_range,z_range,map_true)
