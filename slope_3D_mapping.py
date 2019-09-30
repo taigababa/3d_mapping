@@ -130,6 +130,28 @@ def Fill_3D_Array(filename,x,y,z,array):
             print(traceback.format_tb(sys.exc_info()[2]))
             #fill関数ここまで
 
+def Show_3D(x,y,z,map):
+    x_list =[i for i in range(x)]
+    y_list =[i for i in range(y)]
+    z_list =[i for i in range(z)]
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111,projection="3d")
+
+    mask = map==1
+    X,Y,Z=np.meshgrid(x_list,y_list,z_list)
+    ax.set_xlabel("x",labelpad=10,fontsize=24)
+    ax.set_ylabel("y",labelpad=10,fontsize=24)
+    ax.set_zlabel("z",labelpad=10,fontsize=24)
+    ax.set_xlim(100,0)
+    ax.set_ylim(0,100)
+    ax.set_zlim(0,100)
+    ax.scatter(X[mask],Y[mask],Z[mask],map)
+    plt.show()
+#show関数ここまで
+
+
+
 #正面方向作成
 map_front = Make_3D_Array(x_range,y_range,z_range)
 Fill_3D_Array('IMG_5674.JPG',x_range,y_range,z_range,map_front)
@@ -141,23 +163,4 @@ Fill_3D_Array('IMG_5675.JPG',x_range,y_range,z_range,map_side)
 map_true = map_front*map_side.transpose(2,1,0)
 map_true = map_true.T
 
-x_list=[i for i in range(100)]
-y_list=[i for i in range(100)]
-z_list=[i for i in range(100)]
-
-fig = plt.figure()
-ax = fig.add_subplot(111,projection="3d")
-
-mask = map_true==1
-X,Y,Z=np.meshgrid(x_list,y_list,z_list)
-ax.set_xlabel("x",labelpad=10,fontsize=24)
-ax.set_ylabel("y",labelpad=10,fontsize=24)
-ax.set_zlabel("z",labelpad=10,fontsize=24)
-ax.set_xlim(100,0)
-ax.set_ylim(0,100)
-ax.set_zlim(0,100)
-ax.scatter(X[mask], Y[mask], Z[mask],map_true)
-plt.show()
-print('X',X[mask].ravel())
-print('Y',Y[mask].ravel())
-print('Z',Z[mask].ravel())
+Show_3D(x_range,y_range,z_range,map_true)
