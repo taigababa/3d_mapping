@@ -27,11 +27,10 @@ y_range = 100
 z_range = 100
 
 #カメラのパラメータ
-#y = ax + bの形
+#y = Ax + Bの形
 A = 0.0008625821
 B = 0.03849
-#3台目のカメラの仰角設定[deg]
-theta = 30
+
 #threshold用
 threshold = 100
 
@@ -159,14 +158,7 @@ def Show_3D(x,y,z,map):
     plt.show()
 #show関数ここまで
 
-#ななめ処理関数
-def Make_Array_Straight(map):
-    x_size = map.shape[1]
-    y_size = map.shape[0]
-    z_size = map.shape[2]
 
-    for z in range(z_size):
-        image_original = map
 
 
 
@@ -180,22 +172,11 @@ Fill_3D_Array('IMG_5674.JPG',x_range,y_range,z_range,map_front)
 map_side = Make_3D_Array(y_range,x_range,z_range)
 Fill_3D_Array('IMG_5675.JPG',x_range,y_range,z_range,map_side)
 
-#ななめ作成
-#y方向とz方向のサイズ計算
-#print('make_oblique')
-y_range_oblique = int(y_range*math.cos(math.radians(theta))+z_range*math.sin(math.radians(theta)))
-z_range_oblique = int(z_range*math.cos(math.radians(theta))+y_range*math.sin(math.radians(theta)))
-#空間作成
-map_oblique = Make_3D_Array(y_range_oblique, x_range, z_range_oblique)
-Fill_3D_Array('IMG_5675.JPG',x_range,y_range_oblique,z_range_oblique,map_oblique)
-
-
-
 
 #掛け算
 map_true = map_front*map_side.transpose(0,2,1)
-image_upper = map_true[:,:,50]
+
 
 
 #表示
-Show_3D(x_range,y_range,z_range,map_true)
+#Show_3D(x_range,y_range,z_range,map_true)
