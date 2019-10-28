@@ -132,9 +132,9 @@ def Fill_3D_Array(filename,array,threshold):
                     else:
                         x_change_max = x_change_0
 
-                    depth_image_refine = np.delete(depth_image_refine, np.s_[:x_change_0], 1)
+                    depth_image_refine = np.delete(depth_image_refine, np.s_[:x_change_0], 0)
                     #print('after 0 refine',depth_image_refine.shape[1])
-                    depth_image_refine = np.delete(depth_image_refine, np.s_[depth_image_refine.shape[1] - x_change_max:], 1)
+                    depth_image_refine = np.delete(depth_image_refine, np.s_[depth_image_refine.shape[1] - x_change_max:], 0)
                     #print('after max refine', depth_image_refine.shape[1],depth_frame)
 
 
