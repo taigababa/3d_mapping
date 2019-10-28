@@ -33,19 +33,19 @@ B = 0.03849
 
 #正面作成
 map_front = PROJECTION.make_3D_array(y_range,x_range,z_range)
-PROJECTION.fill_3D_array('IMG_8811.JPG',map_front,77,150,1)
+PROJECTION.fill_3D_array('IMG_8811_result.png',map_front,77,150,1)
 
 
 #横作成
 map_side = PROJECTION.make_3D_array(y_range,z_range,x_range)
-PROJECTION.fill_3D_array('IMG_8810.JPG',map_side,67,150,1)
+PROJECTION.fill_3D_array('IMG_8810_result.png',map_side,67,150,1)
 map_side = np.flip(map_side,2).transpose(0,2,1)
 
 
 
 #上作成
 map_upper = PROJECTION.make_3D_array(z_range,x_range,y_range)
-PROJECTION.fill_3D_array('IMG_8808.JPG',map_upper,210,150,2)
+PROJECTION.fill_3D_array('IMG_8808_result.png',map_upper,210,150,2)
 map_upper = np.flip(np.flip(np.flip(map_upper,2).transpose(2,1,0),0),2)
 
 

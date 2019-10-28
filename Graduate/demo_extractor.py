@@ -33,7 +33,7 @@ def thresh_checker(fname):
     cv2.createTrackbar("trackbar", "thresh", 0, 255, changethresh)
     while(1):
         cv2.imshow("img", img)
-        _, thresh_img = cv2.threshold(v_img, thresh, max_val, thresholdType)
+        _, thresh_img = cv2.threshold(s_img, thresh, max_val, thresholdType)
         cv2.imshow("thresh", thresh_img)
         k = cv2.waitKey(1)
         #Escキーを押すと終了
@@ -42,7 +42,7 @@ def thresh_checker(fname):
         #sを押すと結果を保存
         if k == ord("s"):
             result = cv2.merge(cv2.split(img) + [thresh_img])
-            cv2.imwrite(filename[:filename.rfind(".")] + "_result.png", result)
+            cv2.imwrite(fname[:fname.rfind(".")] + "_result.png", result)
             break
 
 

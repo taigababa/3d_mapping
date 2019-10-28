@@ -24,7 +24,7 @@ images = glob.glob('*.JPG')
 for fname in images:
     DEMO.thresh_checker(fname)
 """
-#DEMO.thresh_checker('IMG_8808.JPG')
+DEMO.thresh_checker('IMG_8810.JPG')
 a_3d = np.arange(24).reshape(2, 3, 4)
 a_3d = a_3d.transpose(1,0,2)
 print(a_3d.shape)
