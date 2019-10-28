@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import slope_3D_mapping as map
+
 
 
 

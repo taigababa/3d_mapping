@@ -45,7 +45,12 @@ def make_3D_array(y,x,z):
 
 
 #3次元配列入力関数
-def fill_3D_array(filename,array,threshold,dist):
+#filenameで写真選択(''付き)
+#arrayでmap_???を指定
+#thresholdは値
+#distは距離[mm]
+#styleはh_img,s_img.v_imgのいずれかを指定(h=0,s=1,v=2)
+def fill_3D_array(filename,array,threshold,dist,style):
     x = array.shape[1]
     y = array.shape[0]
     z = array.shape[2]
@@ -72,12 +77,19 @@ def fill_3D_array(filename,array,threshold,dist):
             #BGRをHSVに変換
             hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             h_img, s_img, v_img = cv2.split(hsv)
-            _, gray = cv2.threshold(v_img, threshold, 255,cv2.THRESH_BINARY )
+            if style == 0:
+                _, gray = cv2.threshold(h_img, threshold, 255,cv2.THRESH_BINARY )
+            elif style == 1:
+                _, gray = cv2.threshold(s_img, threshold, 255,cv2.THRESH_BINARY )
+            else:
+                _, gray = cv2.threshold(v_img, threshold, 255,cv2.THRESH_BINARY )
+
             gray = gray/255
+            check.show_img(gray)
             #ここからz軸に対してスライス(xy平面)ごとに入力
             for depth_frame in range(z):
                 #変形倍率convの計算
-                conv = (A*(dist + depth_frame) - B)/3
+                conv = (A*(dist + depth_frame) - B)
                 #depth_image_grayはそのdepthでの実サイズ画像
                 depth_image = cv2.resize(gray, (int(im_width*conv), int(im_height*conv)))
 
