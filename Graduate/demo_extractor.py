@@ -20,7 +20,7 @@ def changethresh(pos):
 
 
 
-def thresh_checker(fname):
+def thresh_checker(fname,mode):
     img = cv2.imread(fname)
     #BGRをHSVに変換
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -32,17 +32,26 @@ def thresh_checker(fname):
     #トラックバーのコールバック関数の設定
     cv2.createTrackbar("trackbar", "thresh", 0, 255, changethresh)
     while(1):
+
         cv2.imshow("img", img)
-        _, thresh_img = cv2.threshold(s_img, thresh, max_val, thresholdType)
+        if(mode==1):
+            _, thresh_img = cv2.threshold(h_img, thresh, max_val, thresholdType)
+        elif(mode == 2):
+            _, thresh_img = cv2.threshold(s_img, thresh, max_val, thresholdType)
+        else:
+            _, thresh_img = cv2.threshold(v_img, thresh, max_val, thresholdType)
+
         cv2.imshow("thresh", thresh_img)
         k = cv2.waitKey(1)
         #Escキーを押すと終了
         if k == 27:
+            print('no save')
             break
         #sを押すと結果を保存
         if k == ord("s"):
             result = cv2.merge(cv2.split(img) + [thresh_img])
             cv2.imwrite(fname[:fname.rfind(".")] + "_result.png", result)
+            print('saved')
             break
 
 

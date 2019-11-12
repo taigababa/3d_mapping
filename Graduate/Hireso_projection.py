@@ -19,18 +19,23 @@ import math
 #自作
 import check
 
-#撮影空間との距離を想定[mm]
-dist = 100
+#撮影空間との距離を想定[dmm]
+dist = 1000
 
 #合成空間のサイズを指定
-x_range = 100
-y_range = 100
-z_range = 100
-
-#カメラのパラメータ
+x_range = 1000
+y_range = 1000
+z_range = 1000
+"""
+#カメラのパラメータ[mm/pixel]
 #y = Ax + Bの形
 A = 0.0008625821
 B = 0.03849
+"""
+#カメラのパラメータ[dmm/pixel]
+#y = Ax + Bの形
+A = 0.00008625821
+B = 0.003849
 
 #threshold用
 threshold = 100
@@ -90,7 +95,7 @@ def fill_3D_array(filename,array,threshold,dist,style):
             for depth_frame in range(z):
                 #変形倍率convの計算
                 conv = (A*(dist + depth_frame) - B)
-                #depth_image_grayはそのdepthでの実サイズ画像
+                #depth_imageはそのdepthでの実サイズ画像
                 depth_image = cv2.resize(gray, (int(im_width*conv), int(im_height*conv)))
 
                 #ここからサイズ調節

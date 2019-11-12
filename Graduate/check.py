@@ -67,7 +67,7 @@ def show(fname):
             cv2.imwrite(filename[:filename.rfind(".")] + "_result.png", result)
             break
 
-def show_img(img):
+def show_img(img,name):
     #ウィンドウの名前を設定
     cv2.namedWindow("img",cv2.WINDOW_NORMAL)
     while(1):
@@ -78,5 +78,5 @@ def show_img(img):
             break
         #sを押すと結果を保存
         if k == ord("s"):
-            cv2.imwrite(filename[:filename.rfind(".")] + "_result.png", result)
+            cv2.imwrite(name+"_result.png", img*255)
             break
