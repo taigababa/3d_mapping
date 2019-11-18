@@ -42,7 +42,7 @@ map_side = np.flip(map_side.transpose(0,2,1),1)
 
 #上作成
 map_upper = Hi_PROJECTION.make_3D_array(z_range,x_range,y_range)
-Hi_PROJECTION.fill_3D_array('IMG_0103_result_result.png',map_upper,75,150,2)
+Hi_PROJECTION.fill_3D_array_upper('IMG_0103_result_result.png',map_upper,75,150,2,5)
 map_upper = np.flip(np.flip(np.flip(map_upper,2).transpose(2,0,1),0),2)
 map_upper = map_upper.transpose(0,2,1)
 map_upper = np.flip(map_upper,2)
