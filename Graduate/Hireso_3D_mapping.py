@@ -25,10 +25,6 @@ x_range = 100
 y_range = 100
 z_range = 100
 
-#カメラのパラメータ
-#y = Ax + Bの形
-A = 0.0008625821
-B = 0.03849
 
 
 
@@ -63,15 +59,26 @@ map_check_upper = map_front_side+map_upper
 #ADD.show_3D_3color(map_true_add)
 #ADD.show_3D_3color(map_check_upper)
 #ADD.show_3D_3color(map_add_front_side)
+print('x=',map_true.shape[1],' y=',map_true.shape[0], ' z=',map_true.shape[2])
 
-#Show_COLOR.show_3D_color(map_true,'pink',1)
+Show_COLOR.show_3D_color(map_true,'pink',1)
 #Show_COLOR.show_3D_color(map_front,'pink',1)
 #Show_COLOR.show_3D_color(map_side,'pink',1)
 #Show_COLOR.show_3D_color(map_upper,'pink',1)
-Show_COLOR.show_3D_color(map_front_side,'pink',1)
+#Show_COLOR.show_3D_color(map_front_side,'pink',1)
 
 #CHECK.show_img(map_front[:,:,0])
 #CHECK.show_img(map_side[:,99,:])
 #CHECK.show_img(map_upper[50,:,:],'upper')
 #CHECK.show_img(map_front_side[50,:,:],'front_side')
-CHECK.show_img(map_add_front_side[50,:,:],'front+side')
+#CHECK.show_img(map_add_front_side[50,:,:],'front+side')
+
+slice_img_front_side = map_add_front_side[50,:,:]
+plt.imshow(slice_img_front_side, cmap='gray',interpolation='bicubic')
+# plt.xticks([]), plt.yticks([])  #目盛りをなくす
+plt.show()
+
+slice_img_upper = map_upper[50,:,:]
+plt.imshow(slice_img_upper, cmap='gray',interpolation='bicubic')
+# plt.xticks([]), plt.yticks([])  #目盛りをなくす
+plt.show()

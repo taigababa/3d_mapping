@@ -63,11 +63,11 @@ map_check_upper = map_front_side+map_upper
 #ADD.show_3D_3color(map_check_upper)
 #ADD.show_3D_3color(map_add_front_side)
 
-#Show_COLOR.show_3D_color(map_true,'pink',1)
+Show_COLOR.show_3D_color(map_true,'pink',1)
 #Show_COLOR.show_3D_color(map_front,'pink',1)
 #Show_COLOR.show_3D_color(map_side,'pink',1)
 #Show_COLOR.show_3D_color(map_upper,'pink',1)
-Show_COLOR.show_3D_color(map_front_side,'pink',1)
+#Show_COLOR.show_3D_color(map_front_side,'pink',1)
 
 #CHECK.show_img(map_front[:,:,0])
 #CHECK.show_img(map_side[:,99,:])

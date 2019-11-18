@@ -19,26 +19,30 @@ import math
 #自作
 import check
 
-#撮影空間との距離を想定[dmm]
-dist = 1000
 
-#合成空間のサイズを指定
-x_range = 1000
-y_range = 1000
-z_range = 1000
-"""
+
+
 #カメラのパラメータ[mm/pixel]
 #y = Ax + Bの形
 A = 0.0008625821
 B = 0.03849
+
+
 """
-#カメラのパラメータ[dmm/pixel]
+#カメラのパラメータ[mm/pixel]
+#200*200*200用
 #y = Ax + Bの形
-A = 0.00008625821
-B = 0.003849
+A = 0.00043129
+B = 0.019245
+"""
 
 #threshold用
 threshold = 100
+
+#フィルタ設定
+w = 3
+h = 3
+threshold_filter = 0.3
 
 #3次元配列作成関数
 def make_3D_array(y,x,z):
@@ -90,13 +94,16 @@ def fill_3D_array(filename,array,threshold,dist,style):
                 _, gray = cv2.threshold(v_img, threshold, 255,cv2.THRESH_BINARY )
 
             gray = gray/255
-            check.show_img(gray,'gray')
+            blurred_img = cv2.blur(gray,ksize=(w,h))
+            ret,img_threshold = cv2.threshold(blurred_img,threshold_filter,255,cv2.THRESH_BINARY)
+            img_threshold /=255
+            check.show_img(blurred_img,'gray')
             #ここからz軸に対してスライス(xy平面)ごとに入力
             for depth_frame in range(z):
                 #変形倍率convの計算
                 conv = (A*(dist + depth_frame) - B)
                 #depth_imageはそのdepthでの実サイズ画像
-                depth_image = cv2.resize(gray, (int(im_width*conv), int(im_height*conv)))
+                depth_image = cv2.resize(img_threshold, (int(im_width*conv), int(im_height*conv)))
 
                 #ここからサイズ調節
                 ysize = depth_image.shape[0]
@@ -200,145 +207,6 @@ def fill_3D_array(filename,array,threshold,dist,style):
             import traceback
             print(traceback.format_tb(sys.exc_info()[2]))
             #fill関数ここまで
-
-def fill_3D_array_REV(filename,array,threshold,dist):
-    print('rev')
-    x = array.shape[1]
-    y = array.shape[0]
-    z = array.shape[2]
-    images = glob.glob(filename)
-    try:
-        for fname in images:
-            img = cv2.imread(fname)
-            #元画像のx取得
-            im_height = img.shape[0]
-            im_width = img.shape[1]
-
-            """
-            #ここからチンアナゴ抽出
-            #本来は識別機を用いてやるが，今回はthresholdでごまかす
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            ret, gray = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
-            gray = gray/255
-            #check.show('gray',gray)
-            #一応確認用
-            #cv2.imshow('gray',gray)
-            #cv2.waitKey(0)
-            #cv2.destroyAllWindows()
-            """
-            #BGRをHSVに変換
-            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            h_img, s_img, v_img = cv2.split(hsv)
-            _, gray = cv2.threshold(v_img, threshold, 255,cv2.THRESH_BINARY )
-            gray = gray/255
-            #ここからz軸に対してスライス(xy平面)ごとに入力
-            for depth_frame in range(z):
-                #変形倍率convの計算
-                conv = (A*(dist + depth_frame) - B)/3
-                #depth_image_grayはそのdepthでの実サイズ画像
-                depth_image = cv2.resize(gray, (int(im_width*conv), int(im_height*conv)))
-
-                #ここからサイズ調節
-                ysize = depth_image.shape[0]
-
-
-                #縦方向引き伸ばし
-                if ysize <= y:
-                    print('y_upgrade')
-                    y_change = y - ysize
-                    y_change_0 = int(np.floor(y_change/2))
-                    round_checker_y = y_change/2 - y_change_0
-                    #roundではやばそうなので丁寧の処理
-                    if round_checker_y >= 0.5:
-                        y_change_max = y_change_0+1
-                    else:
-                        y_change_max = y_change_0
-
-                    print(y_change_0,y_change_max)
-                    refine_y_0_array = np.zeros((y_change_0, depth_image.shape[1]))
-
-                    refine_y_max_array = np.zeros((y_change_max, depth_image.shape[1]))
-
-
-                    depth_image_refine = np.vstack((refine_y_0_array,depth_image))
-                    depth_image_refine = np.vstack((depth_image_refine, refine_y_max_array))
-                    print('add y refine',depth_image_refine.shape[0],depth_frame)
-
-                #縦方向削るパターン
-                elif ysize > y:
-                    print('reduce',depth_image.shape[0])
-                    y_change = ysize - y
-                    #floorは切り捨て
-                    y_change_0 = int(np.floor(y_change/2))
-                    print('y_change',y_change)
-                    print('y_change_0',y_change_0)
-                    round_checker_y = y_change/2 - y_change_0
-                    if round_checker_y >= 0.5:
-                        y_change_max = y_change_0+1
-                    else:
-                        y_change_max = y_change_0
-                    print('y_change_max',y_change_max)
-                    depth_image_refine_0 = np.delete(depth_image, np.s_[:y_change_0], 0)
-                    print('after 0 refine',depth_image_refine_0.shape[0])
-                    depth_image_refine = np.delete(depth_image_refine_0, np.s_[depth_image_refine_0.shape[0] - y_change_max:], 0)
-                    print('after max refine',depth_image_refine.shape[0])
-
-                #横方向変化
-                #横方向引き伸ばし
-                #x軸方向の変化を求める(100より少ないケース)
-                if depth_image_refine.shape[1] <= x:
-                    print('upgrade')
-                    x_change = x - depth_image_refine.shape[1]
-                    x_change_0 = int(np.floor(x_change/2))
-                    round_checker = x_change/2 - x_change_0
-                    #四捨五入はroundだとバグりそうなので
-                    if round_checker >= 0.5:
-                        x_change_max = x_change_0+1
-                    else:
-                        x_change_max = x_change_0
-
-
-                    refine_x_0_array = np.zeros((y,x_change_0))
-
-                    refine_x_max_array = np.zeros((y, x_change_max))
-
-
-                    depth_image_refine = np.hstack((refine_x_0_array,depth_image_refine))
-                    depth_image_refine = np.hstack((depth_image_refine, refine_x_max_array))
-                    #print('add x refine',depth_image_refine.shape[1])
-
-                #x軸調整(100より多いケース)
-                elif depth_image_refine.shape[1] > x:
-                    #print('reduce',depth_image_refine.shape[1])
-                    x_change = depth_image_refine.shape[1] - x
-                    x_change_0 = int(np.floor(x_change/2))
-                    #print('x_change_0',x_change_0)
-                    round_checker = x_change/2 - x_change_0
-                    if round_checker >= 0.5:
-                        x_change_max = x_change_0+1
-                    else:
-                        x_change_max = x_change_0
-
-                    depth_image_refine = np.delete(depth_image_refine, np.s_[:x_change_0], 1)
-                    #print('after 0 refine',depth_image_refine.shape[1])
-                    depth_image_refine = np.delete(depth_image_refine, np.s_[depth_image_refine.shape[1] - x_change_max:], 1)
-                    #print('after max refine', depth_image_refine.shape[1],depth_frame)
-
-
-                #ここから配列入力
-                array[:,:,z - depth_frame-1]= depth_image_refine
-                #check.show('slice_rev',depth_image_refine)
-
-                #print('x_low:',array[:,:,depth_frame].shape[1],' y_low:',array[:,:,depth_frame].shape[0])
-
-
-
-    except:
-            import sys
-            print("Error:", sys.exc_info()[0])
-            print(sys.exc_info()[1])
-            import traceback
-            print(traceback.format_tb(sys.exc_info()[2]))
 
 def Show_3D(map):
     x = map.shape[0]
