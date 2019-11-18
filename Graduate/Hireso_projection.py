@@ -209,7 +209,7 @@ def fill_3D_array(filename,array,threshold,dist,style):
             #fill関数ここまで
 
 
-def fill_3D_array_upper(filename,array,threshold,dist,style,slide,degree):
+def fill_3D_array_slide(filename,array,threshold,dist,style,slide,axis,degree):
     x = array.shape[1]
     y = array.shape[0]
     z = array.shape[2]
@@ -335,8 +335,8 @@ def fill_3D_array_upper(filename,array,threshold,dist,style,slide,degree):
                     depth_image_refine = np.delete(depth_image_refine, np.s_[depth_image_refine.shape[1] - x_change_max:], 1)
                     #print('after max refine', depth_image_refine.shape[1],depth_frame)
 
-                #ここで5ピクセルほどずらす(カメラ調整)
-                depth_image_shifted = np.roll(depth_image_refine,slide,axis=0)
+                #ここでずらす(カメラ調整)
+                depth_image_shifted = np.roll(depth_image_refine,slide,axis=axis)
                 #ここから配列入力
                 array[:,:,depth_frame]= depth_image_shifted
                 #check.show('slice',depth_image_refine)

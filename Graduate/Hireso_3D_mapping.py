@@ -28,22 +28,24 @@ z_range = 100
 
 
 
-
+#fill_3D_array('IMG_0104_result.png',map_front,thresh,dist,mode)
 #正面作成
 map_front = Hi_PROJECTION.make_3D_array(y_range,x_range,z_range)
-Hi_PROJECTION.fill_3D_array('IMG_0104_result.png',map_front,180,165,2)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0104_result.png',map_front,180,180,2,5,1,0)
 
-
+#Hi_PROJECTION.fill_3D_array_slide('IMG_0101_result.png',map_side,167,120,2,-5,1,slide)
+#slideは0だと横方向(plot的に)
+#slideは1だと縦方向(正の値だと下に動く)
 #横作成
 map_side = Hi_PROJECTION.make_3D_array(y_range,z_range,x_range)
-Hi_PROJECTION.fill_3D_array('IMG_0101_result.png',map_side,167,123,2)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0101_result.png',map_side,167,120,2,-5,1,0)
 map_side = np.flip(map_side.transpose(0,2,1),1)
 
 
 
 #上作成
 map_upper = Hi_PROJECTION.make_3D_array(z_range,x_range,y_range)
-Hi_PROJECTION.fill_3D_array_upper('IMG_0103_result_result.png',map_upper,75,150,2,-3,355)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0103_result_result.png',map_upper,75,160,2,3,1,355)
 map_upper = np.flip(np.flip(np.flip(map_upper,2).transpose(2,0,1),0),2)
 map_upper = map_upper.transpose(0,2,1)
 map_upper = np.flip(map_upper,2)
@@ -86,6 +88,10 @@ slice_img_upper = map_upper[50,:,:]
 #plt.show()
 
 overlap_checker = slice_img_upper + slice_img_front_side
-plt.imshow(overlap_checker, cmap='gray',interpolation='bicubic')
+
+place_checker = map_true_filtered[55,:,:]
+plt.imshow(place_checker, cmap='gray',interpolation='bicubic')
+plt.grid(which='major',color='lime',linestyle='-')
+plt.grid(which='minor',color='lime',linestyle='-')
 # plt.xticks([]), plt.yticks([])  #目盛りをなくす
 plt.show()
