@@ -209,7 +209,7 @@ def fill_3D_array(filename,array,threshold,dist,style):
             #fill関数ここまで
 
 
-def fill_3D_array_upper(filename,array,threshold,dist,style,slide):
+def fill_3D_array_upper(filename,array,threshold,dist,style,slide,degree):
     x = array.shape[1]
     y = array.shape[0]
     z = array.shape[2]
@@ -234,16 +234,20 @@ def fill_3D_array_upper(filename,array,threshold,dist,style,slide):
                 _, gray = cv2.threshold(v_img, threshold, 255,cv2.THRESH_BINARY )
 
             gray = gray/255
+            #フィルタぼかし
             blurred_img = cv2.blur(gray,ksize=(w,h))
+            #あらためて二値化
             ret,img_threshold = cv2.threshold(blurred_img,threshold_filter,255,cv2.THRESH_BINARY)
             img_threshold /=255
-            check.show_img(blurred_img,'gray')
+            #ここから回転
+            img_rotate = cut_rotate(img_threshold,(img_threshold.shape[1],img_threshold.shape[0]),degree)
+            check.show_img(img_rotate,'gray')
             #ここからz軸に対してスライス(xy平面)ごとに入力
             for depth_frame in range(z):
                 #変形倍率convの計算
                 conv = (A*(dist + depth_frame) - B)
                 #depth_imageはそのdepthでの実サイズ画像
-                depth_image = cv2.resize(img_threshold, (int(im_width*conv), int(im_height*conv)))
+                depth_image = cv2.resize(img_rotate, (int(im_width*conv), int(im_height*conv)))
 
                 #ここからサイズ調節
                 ysize = depth_image.shape[0]
@@ -376,7 +380,7 @@ def Show_3D(map):
 #斜め切り出し関数
 def cut_rotate(img,size,deg):
     #check.show('base',img)
-    center = (img.shape[0]/2, img.shape[1]/2)
+    center = (img.shape[1]/2, img.shape[0]/2)
     rot_mat = cv2.getRotationMatrix2D(center, deg, 1.0)
     rot_mat[0][2] += -center[0]+size[0]/2 # -(元画像内での中心位置)+(切り抜きたいサイズの中心)
     rot_mat[1][2] += -center[1]+size[1]/2 # 同上
