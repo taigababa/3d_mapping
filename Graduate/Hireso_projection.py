@@ -335,11 +335,10 @@ def fill_3D_array_upper(filename,array,threshold,dist,style,slide,degree):
                     depth_image_refine = np.delete(depth_image_refine, np.s_[depth_image_refine.shape[1] - x_change_max:], 1)
                     #print('after max refine', depth_image_refine.shape[1],depth_frame)
 
-
-                #ここから配列入力
-                array[:,:,depth_frame]= depth_image_refine
                 #ここで5ピクセルほどずらす(カメラ調整)
-                depth_image_shifted = np.roll(depth_image_refine,slide,axis=1)
+                depth_image_shifted = np.roll(depth_image_refine,slide,axis=0)
+                #ここから配列入力
+                array[:,:,depth_frame]= depth_image_shifted
                 #check.show('slice',depth_image_refine)
 
                 #print('x_low:',array[:,:,depth_frame].shape[1],' y_low:',array[:,:,depth_frame].shape[0])

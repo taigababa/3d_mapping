@@ -42,7 +42,7 @@ map_side = np.flip(map_side.transpose(0,2,1),1)
 
 #上作成
 map_upper = Hi_PROJECTION.make_3D_array(z_range,x_range,y_range)
-Hi_PROJECTION.fill_3D_array_upper('IMG_0103_result_result.png',map_upper,75,150,2,5,355)
+Hi_PROJECTION.fill_3D_array_upper('IMG_0103_result_result.png',map_upper,75,150,2,-3,355)
 map_upper = np.flip(np.flip(np.flip(map_upper,2).transpose(2,0,1),0),2)
 map_upper = map_upper.transpose(0,2,1)
 map_upper = np.flip(map_upper,2)
@@ -56,7 +56,7 @@ map_true = map_front*map_side*map_upper
 map_front_side = map_front*map_side
 map_add_front_side = map_front + map_side
 map_check_upper = map_front_side+map_upper
-#ADD.show_3D_3color(map_true_add)
+ADD.show_3D_3color(map_true_add)
 #ADD.show_3D_3color(map_check_upper)
 #ADD.show_3D_3color(map_add_front_side)
 print('x=',map_true.shape[1],' y=',map_true.shape[0], ' z=',map_true.shape[2])
@@ -74,11 +74,16 @@ Show_COLOR.show_3D_color(map_true,'pink',1)
 #CHECK.show_img(map_add_front_side[50,:,:],'front+side')
 
 slice_img_front_side = map_add_front_side[50,:,:]
-plt.imshow(slice_img_front_side, cmap='gray',interpolation='bicubic')
+#plt.imshow(slice_img_front_side, cmap='gray',interpolation='bicubic')
 # plt.xticks([]), plt.yticks([])  #目盛りをなくす
-plt.show()
+#plt.show()
 
 slice_img_upper = map_upper[50,:,:]
-plt.imshow(slice_img_upper, cmap='gray',interpolation='bicubic')
+#plt.imshow(slice_img_upper, cmap='gray',interpolation='bicubic')
+# plt.xticks([]), plt.yticks([])  #目盛りをなくす
+#plt.show()
+
+overlap_checker = slice_img_upper + slice_img_front_side
+plt.imshow(overlap_checker, cmap='gray',interpolation='bicubic')
 # plt.xticks([]), plt.yticks([])  #目盛りをなくす
 plt.show()
