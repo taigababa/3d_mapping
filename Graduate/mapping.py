@@ -21,6 +21,7 @@ import Show_3D_add as ADD
 import Show_3D_color as Show_COLOR
 import Hireso_projection as Hi_PROJECTION
 import Gaussian_blur as FILTER
+import Slide as SLIDE
 #合成空間のサイズを指定
 x_range = 100
 y_range = 100
@@ -34,6 +35,7 @@ z_range = 100
 #slideは1だと縦方向(負の値だと上に動く)
 map_front = Hi_PROJECTION.make_3D_array(y_range,x_range,z_range)
 Hi_PROJECTION.fill_3D_array_slide('IMG_0117_result.png',map_front,0,150,2,4,1,0)
+map_front = SLIDE.slide(map_front,-1,1)
 
 #Hi_PROJECTION.fill_3D_array_slide('IMG_0101_result.png',map_side,thresh,dist,mode,slide_dist,slide_mode,deg)
 #slideは1だと横方向(plot的に)
@@ -41,6 +43,7 @@ Hi_PROJECTION.fill_3D_array_slide('IMG_0117_result.png',map_front,0,150,2,4,1,0)
 #横作成
 map_side = Hi_PROJECTION.make_3D_array(y_range,z_range,x_range)
 Hi_PROJECTION.fill_3D_array_slide('IMG_0118_result.png',map_side,0,120,2,-5,1,0)
+map_side = SLIDE.slide(map_side,3,1)
 map_side = np.flip(map_side.transpose(0,2,1),1)
 
 
@@ -49,11 +52,15 @@ map_side = np.flip(map_side.transpose(0,2,1),1)
 #0で上下(負の値で下)
 #1で左右(負の値で右)
 map_upper = Hi_PROJECTION.make_3D_array(z_range,x_range,y_range)
-Hi_PROJECTION.fill_3D_array_slide('IMG_0114_result.png',map_upper,0,180,2,0,1,355)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0114_result.png',map_upper,0,178,2,0,1,355)
+#ここでずれの調節
+map_upper = SLIDE.slide(map_upper,3,1)
+map_upper = SLIDE.slide(map_upper,-8,0)
 map_upper = np.flip(np.flip(np.flip(map_upper,2).transpose(2,0,1),0),2)
 #map_upper = map_upper.transpose(0,2,1)
 #map_upper = np.flip(map_upper,2)
 map_upper = np.flip(map_upper,1)
+
 
 
 
@@ -69,7 +76,7 @@ map_check_upper = map_front_side+map_upper
 print('x=',map_true.shape[1],' y=',map_true.shape[0], ' z=',map_true.shape[2])
 
 map_true_filtered = FILTER.Gaussian_blur_3D(map_true,3,0.3)
-#Show_COLOR.show_3D_color(map_true_filtered,'pink',1)
+Show_COLOR.show_3D_color(map_true_filtered,'pink',1)
 #Show_COLOR.show_3D_color(map_front,'pink',1)
 #Show_COLOR.show_3D_color(map_side,'pink',1)
 #Show_COLOR.show_3D_color(map_upper,'pink',1)
