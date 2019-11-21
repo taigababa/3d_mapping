@@ -11,7 +11,7 @@ import Show_3D_add as ADD
 import Show_3D_color as COLOR
 
 thresh = 0
-thresholdType = cv2.THRESH_BINARY
+thresholdType = cv2.THRESH_BINARY_INV
 max_val = 255
 
 def changethresh(pos):
@@ -26,6 +26,7 @@ def thresh_checker(fname,mode):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     #HSVに分解
     h_img, s_img, v_img = cv2.split(hsv)
+    #r_img,g_img,b_img = cv2.split(img)
     #ウィンドウの名前を設定
     cv2.namedWindow("img",cv2.WINDOW_NORMAL)
     cv2.namedWindow("thresh",cv2.WINDOW_NORMAL)
