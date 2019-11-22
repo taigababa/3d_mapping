@@ -62,9 +62,9 @@ def show_3D_3color(map):
     ax.set_xlim(0,x)
     ax.set_ylim(0,y)
     ax.set_zlim(0,z)
-    ax.scatter(Y[mask],X[mask],Z[mask],map,c='cyan',alpha=0.001)
+    ax.scatter(Y[mask],X[mask],Z[mask],map,c='cyan',alpha=0.01)
     mask2 = map==2
-    ax.scatter(Y[mask2],X[mask2],Z[mask2],map,c='lime',alpha=0.01)
+    ax.scatter(Y[mask2],X[mask2],Z[mask2],map,c='lime',alpha=0.1)
     mask3 = map==3
     ax.scatter(Y[mask3],X[mask3],Z[mask3],map,c='pink')
 
