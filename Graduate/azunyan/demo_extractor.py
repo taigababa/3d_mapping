@@ -35,9 +35,9 @@ def thresh_checker(fname,mode):
     while(1):
 
         cv2.imshow("img", img)
-        if(mode==1):
+        if(mode==0):
             _, thresh_img = cv2.threshold(h_img, thresh, max_val, thresholdType)
-        elif(mode == 2):
+        elif(mode == 1):
             _, thresh_img = cv2.threshold(s_img, thresh, max_val, thresholdType)
         else:
             _, thresh_img = cv2.threshold(v_img, thresh, max_val, thresholdType)
