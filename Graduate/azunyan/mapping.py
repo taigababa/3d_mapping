@@ -37,7 +37,7 @@ slice = 50
 #slideは0だと横方向(plot的に)
 #slideは1だと縦方向(負の値だと上に動く)
 map_front = Hi_PROJECTION.make_3D_array(y_range,x_range,z_range)
-Hi_PROJECTION.fill_3D_array_slide('IMG_0117_result.png',map_front,0,150,2,4,1,0)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0117_result.png',map_front,80,150,0,4,1,0)
 map_front = SLIDE.slide(map_front,-1,1)
 
 #Hi_PROJECTION.fill_3D_array_slide('IMG_0101_result.png',map_side,thresh,dist,mode,slide_dist,slide_mode,deg)
@@ -45,7 +45,7 @@ map_front = SLIDE.slide(map_front,-1,1)
 #slideは0だと縦方向(正の値だと上に動く)
 #横作成
 map_side = Hi_PROJECTION.make_3D_array(y_range,z_range,x_range)
-Hi_PROJECTION.fill_3D_array_slide('IMG_0118_result.png',map_side,0,120,2,-5,1,0)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0118_result.png',map_side,80,120,0,-5,1,0)
 map_side = SLIDE.slide(map_side,3,1)
 map_side = np.flip(map_side.transpose(0,2,1),1)
 
