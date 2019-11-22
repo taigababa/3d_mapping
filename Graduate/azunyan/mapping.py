@@ -27,6 +27,9 @@ x_range = 100
 y_range = 100
 z_range = 100
 
+#切り出す高さ
+slice = 50
+
 
 
 #fill_3D_array('IMG_0104_result.png',map_front,thresh,dist,mode)
@@ -76,7 +79,7 @@ map_check_upper = map_front_side+map_upper
 print('x=',map_true.shape[1],' y=',map_true.shape[0], ' z=',map_true.shape[2])
 
 map_true_filtered = FILTER.Gaussian_blur_3D(map_true,3,0.3)
-Show_COLOR.show_3D_color(map_true_filtered,'pink',1)
+#Show_COLOR.show_3D_color(map_true_filtered,'pink',1)
 #Show_COLOR.show_3D_color(map_front,'pink',1)
 #Show_COLOR.show_3D_color(map_side,'pink',1)
 #Show_COLOR.show_3D_color(map_upper,'pink',1)
@@ -88,19 +91,19 @@ Show_COLOR.show_3D_color(map_true_filtered,'pink',1)
 #CHECK.show_img(map_front_side[50,:,:],'front_side')
 #CHECK.show_img(map_add_front_side[50,:,:],'front+side')
 
-slice_img_front_side = map_add_front_side[50,:,:]
+slice_img_front_side = map_add_front_side[slice,:,:]
 #plt.imshow(slice_img_front_side, cmap='gray',interpolation='bicubic')
 # plt.xticks([]), plt.yticks([])  #目盛りをなくす
 #plt.show()
 
-slice_img_upper = map_upper[40,:,:]
+slice_img_upper = map_upper[slice,:,:]
 #plt.imshow(slice_img_upper, cmap='gray',interpolation='bicubic')
 # plt.xticks([]), plt.yticks([])  #目盛りをなくす
 #plt.show()
 
 overlap_checker = slice_img_upper + slice_img_front_side
 
-place_checker = map_true_filtered[40,:,:]
+place_checker = map_true_filtered[slice,:,:]
 plt.imshow(overlap_checker, cmap='gray',interpolation='bicubic')
 plt.grid(which='major',color='lime',linestyle='-')
 plt.grid(which='minor',color='lime',linestyle='-')
