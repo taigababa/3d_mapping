@@ -110,7 +110,7 @@ plt.grid(which='minor',color='lime',linestyle='-')
 # plt.xticks([]), plt.yticks([])  #目盛りをなくす
 plt.show()
 
-#測定用に0,100のグレー画像に変更
+#測定用に0,255のグレー画像に変更
 ret, zslice = cv2.threshold(place_checker, 0.5, 255, cv2.THRESH_BINARY_INV)
 
 
