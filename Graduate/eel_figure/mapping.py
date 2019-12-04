@@ -73,25 +73,27 @@ map_true = map_front*map_side*map_upper
 map_front_side = map_front*map_side
 map_add_front_side = map_front + map_side
 map_check_upper = map_front_side+map_upper
-#ADD.show_3D_3color(map_true_add)
+map_true_add_toshow = np.flip(np.flip(np.flip(map_true_add.transpose(1,2,0),2),1),0)
+ADD.show_3D_3color(map_true_add_toshow)
 #ADD.show_3D_3color(map_check_upper)
-#ADD.show_3D_3color(map_add_front_side)
+map_add_front_side_toshow = np.flip(np.flip(np.flip(map_add_front_side.transpose(1,2,0),2),1),0)
+ADD.show_3D(map_add_front_side_toshow)
 print('x=',map_true.shape[1],' y=',map_true.shape[0], ' z=',map_true.shape[2])
 
 #ここでノイズならし
 map_true_filtered = FILTER.Gaussian_blur_3D(map_true,3,0.3)
 
 #ここから結果表示を整えるために軸入れ替え(x,z)
-map_true_filtered_toshow = np.flip(map_true_filtered.transpose(1,2,0),2)
-map_front_toshow = np.flip(map_front.transpose(1,2,0),2)
-map_side_toshow = np.flip(map_side.transpose(1,2,0),2)
-map_upper_toshow = np.flip(map_upper.transpose(1,2,0),2)
+map_true_filtered_toshow = np.flip(np.flip(np.flip(map_true_filtered.transpose(1,2,0),2),1),0)
+map_front_toshow = np.flip(np.flip(np.flip(map_front.transpose(1,2,0),2),1),0)
+map_side_toshow = np.flip(np.flip(np.flip(map_side.transpose(1,2,0),2),1),0)
+map_upper_toshow = np.flip(np.flip(np.flip(map_upper.transpose(1,2,0),2),1),0)
 
 
 Show_COLOR.show_3D_color(map_true_filtered_toshow,'pink',1)
-Show_COLOR.show_3D_color(map_front_toshow,'blue',1)
-Show_COLOR.show_3D_color(map_side_toshow,'blue',1)
-Show_COLOR.show_3D_color(map_upper_toshow,'blue',1)
+Show_COLOR.show_3D_color(map_front_toshow,'cyan',0.3)
+Show_COLOR.show_3D_color(map_side_toshow,'cyan',0.3)
+Show_COLOR.show_3D_color(map_upper_toshow,'cyan',0.3)
 #Show_COLOR.show_3D_color(map_front_side,'pink',1)
 
 #CHECK.show_img(map_front[:,:,0])
