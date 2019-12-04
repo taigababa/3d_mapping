@@ -28,7 +28,16 @@ y_range = 100
 z_range = 100
 
 #切り取るスライスの深さ
-depth = 55
+depth = 50
+
+def slice_img_viewer(y,map,name):
+    map_stack = np.zeros((100,100)).reshape(100,100)
+    for i in range(10):
+        map_stack += map[:,x-5+i,:]
+
+    ret, img_slice = cv2.threshold(map_stack, 0.5, 255, cv2.THRESH_BINARY_INV)
+    CHECK.show_img(img_slice,name)
+
 
 
 
@@ -36,16 +45,17 @@ depth = 55
 #正面作成
 #slideは0だと横方向(plot的に)
 #slideは1だと縦方向(負の値だと上に動く)
+#distが大きければ，広がり具合が増す
 map_front = Hi_PROJECTION.make_3D_array(y_range,x_range,z_range)
-Hi_PROJECTION.fill_3D_array_slide('IMG_0117_result.png',map_front,0,153,2,4,1,0)
-map_front = SLIDE.slide(map_front,-1,1)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0117_result.png',map_front,0,155,2,4,1,0)
+map_front = SLIDE.slide(map_front,-3,1)
 
 #Hi_PROJECTION.fill_3D_array_slide('IMG_0101_result.png',map_side,thresh,dist,mode,slide_dist,slide_mode,deg)
 #slideは1だと横方向(plot的に)
 #slideは0だと縦方向(正の値だと上に動く)
 #横作成
 map_side = Hi_PROJECTION.make_3D_array(y_range,z_range,x_range)
-Hi_PROJECTION.fill_3D_array_slide('IMG_0118_result.png',map_side,0,134,2,-5,1,0)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0118_result.png',map_side,0,130,2,-5,1,0)
 map_side = SLIDE.slide(map_side,3,1)
 map_side = np.flip(map_side.transpose(0,2,1),1)
 
@@ -111,7 +121,19 @@ plt.grid(which='minor',color='lime',linestyle='-')
 plt.show()
 
 #測定用に0,255のグレー画像に変更
-ret, zslice = cv2.threshold(place_checker, 0.5, 255, cv2.THRESH_BINARY_INV)
 
-
-CHECK.show_img(zslice,"z_slice50")
+#z = depthでの位置
+CHECK.show_img(place_checker,"place_checker")
+#ここから各ねじの高さ測定(各重心座標の四捨五入した値で計算)
+#1本目
+x = 20
+slice_img_viewer(x,map_true_filtered,"slice1")
+#2
+x = 30
+slice_img_viewer(x,map_true_filtered,"slice2")
+#3
+x = 60
+slice_img_viewer(x,map_true_filtered,"slice3")
+#4
+x = 90
+slice_img_viewer(x,map_true_filtered,"slice4")

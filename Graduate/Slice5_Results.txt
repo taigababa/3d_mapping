@@ -1,0 +1,2 @@
+ 	X	Y	XM	YM	BX	BY	Width	Height
+1	7.045	39.645	7.045	39.645	5	28	4	25
