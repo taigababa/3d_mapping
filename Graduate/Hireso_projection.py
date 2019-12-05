@@ -92,7 +92,7 @@ def fill_3D_array_slide(filename,array,threshold,dist,style,slide,axis,degree):
             img_threshold /=255
             #ここから回転
             img_rotate = cut_rotate(img_threshold,(img_threshold.shape[1],img_threshold.shape[0]),degree)
-            check.show_img(img_rotate,'gray')
+            #check.show_img(img_rotate,'gray')
             #ここからz軸に対してスライス(xy平面)ごとに入力
             for depth_frame in range(z):
                 #変形倍率convの計算
