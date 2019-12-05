@@ -22,6 +22,7 @@ import Show_3D_color as Show_COLOR
 import Hireso_projection as Hi_PROJECTION
 import Gaussian_blur as FILTER
 import Slide as SLIDE
+import addition as ADDITION
 #合成空間のサイズを指定
 x_range = 100
 y_range = 100
@@ -79,7 +80,8 @@ map_check_upper = map_front_side+map_upper
 print('x=',map_true.shape[1],' y=',map_true.shape[0], ' z=',map_true.shape[2])
 
 map_true_filtered = FILTER.Gaussian_blur_3D(map_true,3,0.3)
-Show_COLOR.show_3D_color(map_true_filtered,'pink',1)
+map_true_additon = ADDITION.addition(map_true_filtered,1)
+Show_COLOR.show_3D_color(map_true_additon,'pink',1)
 #Show_COLOR.show_3D_color(map_front,'pink',1)
 #Show_COLOR.show_3D_color(map_side,'pink',1)
 #Show_COLOR.show_3D_color(map_upper,'pink',1)
