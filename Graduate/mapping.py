@@ -28,7 +28,7 @@ y_range = 100
 z_range = 100
 
 #切り取るスライスの深さ
-depth = 50
+depth = 57
 
 def slice_img_viewer(y,map,name):
     map_stack = np.zeros((100,100)).reshape(100,100)
@@ -37,6 +37,12 @@ def slice_img_viewer(y,map,name):
 
     ret, img_slice = cv2.threshold(map_stack, 0.5, 255, cv2.THRESH_BINARY_INV)
     CHECK.show_img(img_slice,name)
+    CHECK.show_img(map_stack,name + "_non_thresh")
+
+def ground_maker(map,depth):
+    map_ground = np.ones((100,100)).reshape(100,100)
+    map[depth,:,:] += map_ground
+
 
 
 
@@ -65,7 +71,7 @@ map_side = np.flip(map_side.transpose(0,2,1),1)
 #0で上下(負の値で下)
 #1で左右(負の値で右)
 map_upper = Hi_PROJECTION.make_3D_array(z_range,x_range,y_range)
-Hi_PROJECTION.fill_3D_array_slide('IMG_0114_result.png',map_upper,0,174,2,0,1,355)
+Hi_PROJECTION.fill_3D_array_slide('IMG_0114_result.png',map_upper,0,170,2,0,1,355)
 #ここでずれの調節
 map_upper = SLIDE.slide(map_upper,1,1)
 map_upper = SLIDE.slide(map_upper,-7,0)
@@ -89,7 +95,7 @@ map_check_upper = map_front_side+map_upper
 print('x=',map_true.shape[1],' y=',map_true.shape[0], ' z=',map_true.shape[2])
 
 map_true_filtered = FILTER.Gaussian_blur_3D(map_true,3,0.3)
-Show_COLOR.show_3D_color(map_true_filtered,'pink',1)
+#Show_COLOR.show_3D_color(map_true_filtered,'pink',1)
 #Show_COLOR.show_3D_color(map_front,'pink',1)
 #Show_COLOR.show_3D_color(map_side,'pink',1)
 #Show_COLOR.show_3D_color(map_upper,'pink',1)
@@ -113,7 +119,11 @@ slice_img_upper = map_upper[depth,:,:]
 
 overlap_checker = slice_img_upper + slice_img_front_side
 
-place_checker = map_true_filtered[depth,:,:]
+map_for_check = Hi_PROJECTION.make_3D_array(y_range,x_range,z_range)
+map_for_check = map_true_filtered
+ground_maker(map_for_check,depth)
+
+place_checker = map_for_check[depth-1,:,:]
 plt.imshow(overlap_checker, cmap='gray',interpolation='bicubic')
 plt.grid(which='major',color='lime',linestyle='-')
 plt.grid(which='minor',color='lime',linestyle='-')
@@ -122,18 +132,23 @@ plt.show()
 
 #測定用に0,255のグレー画像に変更
 
+
 #z = depthでの位置
 CHECK.show_img(place_checker,"place_checker")
 #ここから各ねじの高さ測定(各重心座標の四捨五入した値で計算)
 #1本目
 x = 20
 slice_img_viewer(x,map_true_filtered,"slice1")
+slice_img_viewer(x,map_true_add/5,"add_slice_1")
 #2
 x = 30
 slice_img_viewer(x,map_true_filtered,"slice2")
+slice_img_viewer(x,map_true_add/5,"add_slice_2")
 #3
 x = 60
 slice_img_viewer(x,map_true_filtered,"slice3")
+slice_img_viewer(x,map_true_add/5,"add_slice_3")
 #4
 x = 90
 slice_img_viewer(x,map_true_filtered,"slice4")
+slice_img_viewer(x,map_true_add/5,"add_slice_4")
