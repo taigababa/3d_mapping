@@ -30,7 +30,7 @@ def addition(map,shift):
         depth_image_shifted_x = np.roll(depth_image_refine,shift,axis=1)
         depth_image_shifted_x_minus = np.roll(depth_image_refine,-shift,axis=1)
         depth_image_shifted_y = np.roll(depth_image_refine,shift,axis=0)
-        depth_image_shifted_y_minus = np.roll(depth_image_refine,-shift,axis=1)
+        depth_image_shifted_y_minus = np.roll(depth_image_refine,-shift,axis=0)
         map_ret[:,:,i] = map[:,:,i]
         map_ret[:,:,i] += depth_image_shifted_x
         map_ret[:,:,i] += depth_image_shifted_y
