@@ -56,6 +56,57 @@ def ground_maker(map,depth):
     map_with_ground[depth,:,:] += map_ground
     return map_with_ground
 
+def guide_maker(img,x,y,rad):
+    for i in range(rad):
+        img[y-i,x-i] = [100,120,255]
+        img[y-i,x] = [100,120,255]
+        img[y-i,x+i] =[100,120,255]
+        img[y,x-i] = [100,120,255]
+        img[y,x] = [100,120,255]
+        img[y,x+i] =[100,120,255]
+        img[y+i,x-i] = [100,120,255]
+        img[y+i,x] = [100,120,255]
+        img[y+i,x+i] =[100,120,255]
+
+
+
+def guideline(img):
+    guide = img
+    guide_maker(guide,80,20,3)
+    guide_maker(guide,30,30,3)
+    guide_maker(guide,50,30,3)
+    guide_maker(guide,30,60,3)
+    guide_maker(guide,70,60,3)
+    guide_maker(guide,10,90,3)
+    return guide
+
+def place_img_viewer_with_guide(y,map,name):
+    map_stack = np.zeros((100,100)).reshape(100,100)
+    for i in range(20):
+        map_stack += map[y-10+i,:,:]
+
+
+    ret, img_slice = cv2.threshold(map_stack, 0.5, 255, cv2.THRESH_BINARY_INV)
+    #guide = guideline()
+    #guide *= 80
+    #img_slice += guide
+    img_slice = img_slice.astype(np.uint8)
+    img_slice_color = cv2.cvtColor(img_slice, cv2.COLOR_GRAY2BGR)
+    img_slice_color = guideline(img_slice_color)
+
+    cv2.namedWindow("img",cv2.WINDOW_NORMAL)
+    while(1):
+        cv2.imshow("img", img_slice_color)
+        k = cv2.waitKey(1)
+        #Escキーを押すと終了
+        if k == 27:
+            break
+        #sを押すと結果を保存
+        if k == ord("s"):
+            cv2.imwrite(name+"_result.png", img_slice_color)
+            break
+
+
 
 
 
@@ -140,7 +191,7 @@ map_for_check = map_true_filtered
 #ground_maker前にcheckしないとgroundで真っ白になる
 place_checker = map_for_check[depth,:,:]
 #z = depthでの位置
-place_img_viewer(depth,map_for_check,"place")
+place_img_viewer_with_guide(depth,map_for_check,"place_with_guide")
 
 ret, place_5 = cv2.threshold(map_true_filtered[58,:,:], 0.5, 255, cv2.THRESH_BINARY_INV)
 CHECK.show_img(place_5,"place_for_5")
