@@ -94,11 +94,15 @@ def fill_3D_array_slide(filename,array,threshold,dist,style,slide,axis,degree):
             img_rotate = cut_rotate(img_threshold,(img_threshold.shape[1],img_threshold.shape[0]),degree)
             #check.show_img(img_rotate,'gray')
             #ここからz軸に対してスライス(xy平面)ごとに入力
+            ret,img_rotate_to_show = cv2.threshold(img_rotate,0.5,255,cv2.THRESH_BINARY_INV)
+            check.show_img(img_rotate_to_show,"after_processing")
             for depth_frame in range(z):
+
                 #変形倍率convの計算
                 conv = (A*(dist + depth_frame) - B)
                 #depth_imageはそのdepthでの実サイズ画像
                 depth_image = cv2.resize(img_rotate, (int(im_width*conv), int(im_height*conv)))
+
 
                 #ここからサイズ調節
                 ysize = depth_image.shape[0]
@@ -190,11 +194,19 @@ def fill_3D_array_slide(filename,array,threshold,dist,style,slide,axis,degree):
                 depth_image_shifted = np.roll(depth_image_refine,slide,axis=axis)
                 #ここから配列入力
                 array[:,:,depth_frame]= depth_image_shifted
+                """
+                #卒論用画像表示
+                if (depth_frame == 9):
+                    _, depth_image_shifted_reverse = cv2.threshold(depth_image_shifted, 0.5, 255, cv2.THRESH_BINARY_INV)
+                    check.show_img(depth_image_shifted_reverse,"depth_10")
+                elif(depth_frame == 39):
+                    _, depth_image_shifted_reverse = cv2.threshold(depth_image_shifted, 0.5, 255,cv2.THRESH_BINARY_INV )
+                    check.show_img(depth_image_shifted_reverse,"depth_40")
                 #check.show('slice',depth_image_refine)
 
                 #print('x_low:',array[:,:,depth_frame].shape[1],' y_low:',array[:,:,depth_frame].shape[0])
 
-
+                """
 
     except:
             import sys
