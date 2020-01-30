@@ -1,0 +1,3 @@
+ 	X	Y	XM	YM	BX	BY	Width	Height	Angle	MinThr	MaxThr	Length
+1	78.750	42.875	0	0	79	23	0	40	-90	0	255	39.500
+2	79.750	42.938	0	0	80	23	0	40	-90	0	255	39.625
