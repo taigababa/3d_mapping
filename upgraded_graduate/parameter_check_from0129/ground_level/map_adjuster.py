@@ -77,19 +77,19 @@ cv2.createTrackbar(switch, 'image',3,5,nothing)
 switch_guide = '0 : no guide \n1 : guideline'
 cv2.createTrackbar(switch_guide, 'image',1,1,nothing)
 switch_ground = '0 : no ground \n1 : ground'
-cv2.createTrackbar(switch_ground, 'image',0,1,nothing)
-cv2.createTrackbar("front_dist","image",150,300,nothing)
-cv2.createTrackbar("front_deg","image",2,360,nothing)
+cv2.createTrackbar(switch_ground, 'image',1,1,nothing)
+cv2.createTrackbar("front_dist","image",50,300,nothing)
+cv2.createTrackbar("front_deg","image",0,360,nothing)
 cv2.createTrackbar("front_move_y","image",10,20,nothing)
-cv2.createTrackbar("front_move_x","image",7,20,nothing)
-cv2.createTrackbar("front_move_z","image",5,20,nothing)
+cv2.createTrackbar("front_move_x","image",10,20,nothing)
+cv2.createTrackbar("front_move_z","image",10,20,nothing)
 
-cv2.createTrackbar("side_dist","image",124,300,nothing)
-cv2.createTrackbar("side_deg","image",1,360,nothing)
-cv2.createTrackbar("side_move_y","image",7,20,nothing)
+cv2.createTrackbar("side_dist","image",50,300,nothing)
+cv2.createTrackbar("side_deg","image",0,360,nothing)
+cv2.createTrackbar("side_move_y","image",10,20,nothing)
 cv2.createTrackbar("side_move_x","image",10,20,nothing)
 
-cv2.createTrackbar("upper_dist","image",188,300,nothing)
+cv2.createTrackbar("upper_dist","image",400,500,nothing)
 cv2.createTrackbar("upper_deg","image",180,360,nothing)
 cv2.createTrackbar("upper_move_y","image",14,20,nothing)
 cv2.createTrackbar("upper_move_x","image",8,20,nothing)
@@ -195,7 +195,7 @@ while(1):
     upper_move_y = cv2.getTrackbarPos("upper_move_y","image")
 
     #front
-    map_front = NP.make_map('./output/front_input_calibrated.png',0,front_dist,0)
+    map_front = NP.make_map('ground_img_0.png',0,front_dist,0)
     #x軸(左右)移動
     map_front = SLIDE.slide_front(map_front,front_move_y-10,1)
     #y軸(上下)移動
@@ -205,7 +205,7 @@ while(1):
     #z軸移動(サイドとの高さ合わせ)
     map_front = SLIDE.slide_front_z(map_front,front_move_z-10)
     #side
-    map_side = NP.make_map_side('./output/side_input_calibrated.png',0,side_dist,0)
+    map_side = NP.make_map_side('ground_img_1.png',0,side_dist,0)
     #x軸(左右)移動
     map_side = SLIDE.slide_side(map_side,side_move_y-10,1)
     #y軸(上下)移動
@@ -213,7 +213,7 @@ while(1):
     #回転
     map_side = NP.Rotate_side(map_side, side_deg)
     #upper
-    map_upper = NP.make_map_upper('./output/upper_input_calibrated.png',0,upper_dist,upper_deg)
+    map_upper = NP.make_map_upper('ground_img_2.png',0,upper_dist,upper_deg)
     #x軸(左右)移動
     map_upper = SLIDE.slide_upper(map_upper,upper_move_y-10,0)
     #y軸(上下)移動
