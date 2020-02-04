@@ -262,4 +262,4 @@ while(1):
 
 
     #whileここまで
-Show_COLOR.show_3D_color(map_true_filtered,"black",0.2)
+Show_COLOR.show_heat_color_nolabel(map_true_filtered,"black",1)
