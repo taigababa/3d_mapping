@@ -69,30 +69,33 @@ cv2.namedWindow("image_show",cv2.WINDOW_NORMAL)
 #map_true用windowの設計
 cv2.namedWindow("image_true",cv2.WINDOW_NORMAL)
 #cv2.createTrackbar("trackbar_name","window_name",min,max,呼び出す関数)
-cv2.createTrackbar("depth", "image", 59, 99, nothing)
+cv2.createTrackbar("depth", "image", 58, 99, nothing)
 cv2.createTrackbar("x_axis","image",60,99,nothing)
+cv2.createTrackbar("y_axis","image",60,99,nothing)
 # create switch for ON/OFF functionality
-switch = '0 : front \n1 : side\n2 : upper\n3 : filtered\n4 : added\n5 : front+side'
+switch = '0:f 1:s 2:u 3:f 4:add 5:f+s'
 cv2.createTrackbar(switch, 'image',3,5,nothing)
 switch_guide = '0 : no guide \n1 : guideline'
 cv2.createTrackbar(switch_guide, 'image',1,1,nothing)
 switch_ground = '0 : no ground \n1 : ground'
-cv2.createTrackbar(switch_ground, 'image',0,1,nothing)
-cv2.createTrackbar("front_dist","image",150,300,nothing)
+cv2.createTrackbar(switch_ground, 'image',0,2,nothing)
+cv2.createTrackbar("front_dist","image",144,300,nothing)
 cv2.createTrackbar("front_deg","image",2,360,nothing)
-cv2.createTrackbar("front_move_y","image",10,20,nothing)
-cv2.createTrackbar("front_move_x","image",7,20,nothing)
-cv2.createTrackbar("front_move_z","image",5,20,nothing)
+cv2.createTrackbar("front_move_x","image",8,20,nothing)
+cv2.createTrackbar("front_move_y","image",8,20,nothing)
+cv2.createTrackbar("front_move_z","image",6,20,nothing)
 
-cv2.createTrackbar("side_dist","image",124,300,nothing)
+cv2.createTrackbar("side_dist","image",120,300,nothing)
 cv2.createTrackbar("side_deg","image",1,360,nothing)
-cv2.createTrackbar("side_move_y","image",7,20,nothing)
-cv2.createTrackbar("side_move_x","image",10,20,nothing)
+cv2.createTrackbar("side_move_x","image",8,20,nothing)
+cv2.createTrackbar("side_move_y","image",6,20,nothing)
 
-cv2.createTrackbar("upper_dist","image",188,300,nothing)
+
+cv2.createTrackbar("upper_dist","image",172,300,nothing)
 cv2.createTrackbar("upper_deg","image",180,360,nothing)
-cv2.createTrackbar("upper_move_y","image",14,20,nothing)
 cv2.createTrackbar("upper_move_x","image",8,20,nothing)
+cv2.createTrackbar("upper_move_y","image",14,20,nothing)
+
 """
 #front
 map_front = NP.make_map('front_input.png',0,front_dist,front_deg)
@@ -143,6 +146,8 @@ while(1):
             f.write(",")
             f.write(str(front_move_y))
             f.write(",")
+            f.write(str(front_move_z))
+            f.write(",")
 
             f.write(str(side_dist))
             f.write(",")
@@ -166,6 +171,7 @@ while(1):
 
     depth = cv2.getTrackbarPos('depth','image')
     x_axis = cv2.getTrackbarPos('x_axis','image')
+    y_axis = cv2.getTrackbarPos('y_axis','image')
     map_select = cv2.getTrackbarPos(switch,'image')
     if map_select==0:
         map = map_front
@@ -233,8 +239,16 @@ while(1):
 
     elif ground_select==1:
         img = map[:,x_axis,:]
+        """
         for n in range(3):
             img += map[:,x_axis-n+2,:]
+        #img[depth,:] += 1
+        """
+        #img[depth,:] += 1
+    elif ground_select==2:
+        img = map[:,:,y_axis]
+        for n in range(3):
+            img += map[:,:,y_axis-n+2]
         img[depth,:] += 1
 
     guide_select = cv2.getTrackbarPos(switch_guide,'image')
@@ -263,3 +277,4 @@ while(1):
 
     #whileここまで
 Show_COLOR.show_3D_color(map_true_filtered,"black",0.2)
+Show_COLOR.show_3D_color_nolabel(map_true_filtered,"black",1)
